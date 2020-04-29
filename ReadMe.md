@@ -25,29 +25,29 @@ This repo allows you to launch an EC2 using Terraform the EC2 uses a previously 
 
 ### Cloning Repository
 
-```
+```sh
 git clone git@github.com:victorsibanda/first_terraform.git
 ```
 
 ### Terraform Commands
 
 - To Initialise folder to use terraform use
-```
+```sh
 terraform init
 ```
 
 - Test's to see if you have necessary AWS resources
-```
+```sh
 terraform plan
 ```
 
 - Applies the changes on main.tf which run the app
-```
+```sh
 terraform apply
 ```
 
 - To destroy all resources created by terraform
-```
+```sh
 terraform destroy
 ```
 
@@ -58,7 +58,7 @@ terraform destroy
 To run scripts you would use, templates and, create a template file in that repo. The filename would be `{name}.sh.tpl`.
 
 - The Syntax is
-```
+```hcl
 data "template_file" "init" {
   template = "${file("${path.module}/init.tpl")}"
   vars = {
@@ -72,7 +72,7 @@ data "template_file" "init" {
 Alternatively you could use remote exec which allows you to run inline commands but you will need to move over your key pair to allow AWS to use it to ssh into the machine to run the command.
 
 - The syntax is:
-```
+```hcl
 provisioner "remote-exec" {
     inline = [
       "puppet apply",
@@ -90,7 +90,7 @@ When using terraform you can use it to make 2-tier architecture.  In this case I
 
 The syntax used when creating Modules on the main.tf file is
 
-```
+```hcl
 
 module "app" {
   source = "./modules/app_tier"
@@ -134,20 +134,22 @@ $ tree complete-module/
 To connect the database to the app I had to use Environment variables and took 3 steps to improve make it work
 
 #### Adding Outputs Line in db_tier/main.tf
-```
+```hcl
 output "db_private_ip" {
   value = aws_instance.db_instance.private_ip
 }
 
 ```
 #### Including the line within the script `scripts/app/app_init.sh.tpl` and adding it to the `app_tier/main.tf`
-```
+
+---
+```sh
 echo "export DB_HOST='mongodb://${db_priv_ip}:27017/posts'" >> /home/ubuntu/.bashrc
 echo "export DB_HOST='mongodb://${db_priv_ip}:27017/posts'" >> /home/ubuntu/.profile
 source /home/ubuntu/.bashrc
 source /home/ubuntu/.profile
-
-
+```
+```hcl
 data "template_file" "app_init" {
   template = "${file("./scripts/app/app_init.sh.tpl")}"
   vars = {
@@ -155,14 +157,15 @@ data "template_file" "app_init" {
     }
 }
 ```
+---
 #### Adding it to app_tier Variable and including it on main.tf
-```
+```hcl
 
 variable "db_private_ip" {
   description = "the ip of the db instance"
 }
 
-// Main.tf// App Module
+#// Main.tf// App Module
 
 db_private_ip = module.db.db_private_ip
 
