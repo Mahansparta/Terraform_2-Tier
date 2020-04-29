@@ -143,8 +143,3 @@ resource "aws_instance" "db_instance" {
     user_data = data.template_file.db_init.rendered
 
 }
-
-
-output "db_private_ip" {
-  value = aws_instance.db_instance.private_ip
-}
