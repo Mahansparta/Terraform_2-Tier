@@ -47,16 +47,3 @@ module "db" {
 
 
 }
-
-
-
-
-
-# NACL
-# Security Group
-
-# Create Internet Gateway
-
-# Call Module
-
-# Call Module
