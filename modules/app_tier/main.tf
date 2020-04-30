@@ -237,15 +237,21 @@ resource "aws_launch_configuration" "app_launchconfig" {
 # Auto Scaling Group
 # Specifies the scaling properties (min instances, max instances, health checks)
 
+data "aws_availability_zones" "all" {}
 
 
-# resource "aws_autoscaling_group" "app_autoscaling" {
-#   name                   ="app_autoscaling"
-#   vpc_zone_identifier    = ["${aws_subnet.app_subnet.id}"]
-#   launch_configuration   = "$(aws_launch_configuration.app_launchconfig.name)"
-#   min_size               = 1
-#   max_size               = 1
-#   health_check_grace_period = 300
-#   health_check_type = "EC2"
-#   force_delete = true
-# }
+resource "aws_autoscaling_group" "app_asg" {
+  vpc_zone_identifier  = ["${aws_subnet.app_subnet.id}"]
+  launch_configuration = "${aws_launch_configuration.app_launchconfig.id}"
+  # availability_zones = ["${data.aws_availability_zones.all.names}"]
+  min_size             = 1
+  max_size             = 1
+  health_check_grace_period = 300
+  health_check_type          ="EC2"
+  force_delete = true
+  tag {
+    key = "Name"
+    value = "Victor-Eng54-TerraformASG"
+    propagate_at_launch = true
+  }
+}
