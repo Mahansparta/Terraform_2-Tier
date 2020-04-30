@@ -26,7 +26,7 @@ This repo allows you to launch an EC2 using Terraform the EC2 uses a previously 
 ### Cloning Repository
 
 ```sh
-git clone git@github.com:victorsibanda/first_terraform.git
+git clone git@github.com:victorsibanda/Terraform_2-Tier.git
 ```
 
 ### Terraform Commands
