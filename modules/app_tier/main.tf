@@ -225,7 +225,7 @@ resource "aws_launch_configuration" "app_launchconfig" {
   image_id        = var.ami_id
   instance_type   ="t2.micro"
   security_groups = [aws_security_group.App_SG.id]
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   user_data = data.template_file.app_init.rendered
   lifecycle {
     create_before_destroy = true
