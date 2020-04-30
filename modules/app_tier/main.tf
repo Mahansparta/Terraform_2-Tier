@@ -98,7 +98,7 @@ resource "aws_route_table_association" "main" {
 
 
 resource "aws_security_group" "App_SG" {
-  name        = "App-SG"
+  name        = "Victor-Eng54_App-SG"
   description = "Allows for traffic on Port 80"
   vpc_id      = var.vpc_id
 
@@ -179,6 +179,8 @@ resource "aws_instance" "app_instance" {
   # }
 }
 
+
+### Build Target Group
 resource "aws_lb" "app_lb" {
   name               = "Victor-Eng54-lb-tf"
   internal           = false
@@ -191,6 +193,27 @@ resource "aws_lb" "app_lb" {
     Name = "${var.name}-lb-tf"
     Environment = "${var.name}-production"
   }
+}
+
+
+resource "aws_lb_target_group" "LB_TargetGroup" {
+  name     = "Victor-Eng54-LBTG"
+  port     = 80
+  protocol = "TCP"
+  target_type = "instance"
+  vpc_id   = var.vpc_id
+
+}
+
+resource "aws_lb_listener" "lb_litsener" {
+    load_balancer_arn = aws_lb.app_lb.arn
+    port              = 80
+    protocol          = "TCP"
+
+    default_action {
+      target_group_arn = aws_lb_target_group.LB_TargetGroup.arn
+      type             = "forward"
+    }
 }
 
 
@@ -219,8 +242,6 @@ resource "aws_lb" "app_lb" {
 #   health_check_type = "EC2"
 #   force_delete = true
 #
-#   tag {
-#     value = "EC2_Instance"
 #
 #   }
 #
