@@ -221,18 +221,24 @@ resource "aws_lb_listener" "lb_litsener" {
 #Specifies the properties of the intance AMI ID, Security Group
 
 resource "aws_launch_configuration" "app_launchconfig" {
-  name_prefix     ="app_launchconfig"
+  name_prefix     ="vs_app_launchconfig"
   image_id        = var.ami_id
   instance_type   ="t2.micro"
   security_groups = [aws_security_group.App_SG.id]
   associate_public_ip_address = false
   user_data = data.template_file.app_init.rendered
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 
-# # Auto Scaling Group
-# # Specifies the scaling properties (min instances, max instances, health checks)
-#
+# Auto Scaling Group
+# Specifies the scaling properties (min instances, max instances, health checks)
+
+
+
 # resource "aws_autoscaling_group" "app_autoscaling" {
 #   name                   ="app_autoscaling"
 #   vpc_zone_identifier    = ["${aws_subnet.app_subnet.id}"]
@@ -242,9 +248,4 @@ resource "aws_launch_configuration" "app_launchconfig" {
 #   health_check_grace_period = 300
 #   health_check_type = "EC2"
 #   force_delete = true
-#
-#
-#   }
-#
-#
 # }
